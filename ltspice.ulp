@@ -685,12 +685,13 @@ string a[];
 int    SearchIs_UNC;
 int    CntSubDir = 4;  // maximal bis in den 4. Unterordner suchen
 
+/* Removed 10/21/2016 JG not necessary for cross-platform implementation
 int OS = strstr(OS_SIGNATURE, "Windows");
 if (OS < 0) {
   dlgMessageBox("This ULP runs only on Windows", "OK");
   exit(-1);
 }
-
+*/
 
 /* *************** file functions *************** */
 int check_files(string path, string file_ext) {
