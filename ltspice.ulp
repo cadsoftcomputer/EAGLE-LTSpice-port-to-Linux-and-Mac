@@ -659,7 +659,7 @@ int showtest = 1;
 
 
 void testsyscommand(string cmdexe, string s) {
-  dlgDialog("DOS comand check") {
+  dlgDialog("Command check") {
     dlgHBoxLayout dlgSpacing(600);
     dlgLabel(s);
     dlgTextEdit(cmdexe);
