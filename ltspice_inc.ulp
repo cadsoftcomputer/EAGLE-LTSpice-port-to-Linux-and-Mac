@@ -134,3 +134,7 @@ string file_search(string searchfile, string root, int maxiteration, string debu
   } while(SearchnRoot);
   return searchfoundfile[0];
 }
+
+/**********************************************************************************************************************
+*                                       EXPORT AND IMPORT FUNCTIONS                                                   *
+**********************************************************************************************************************/
