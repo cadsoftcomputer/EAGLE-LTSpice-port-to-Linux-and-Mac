@@ -193,3 +193,18 @@ void call_system(string exportfile) {  // DOS comand execute
   system(syscommand);  // externes Programm starten
   return;
 }
+
+void dosfilecopy( string source, string target, string option) {
+  string DOScommand;
+  sprintf(DOScommand, "XCOPY \"%s\" \"%s\" %s", lash2backslash(source), lash2backslash(target), option);
+  /*
+  dlgDialog("DOS command") {
+    dlgHBoxLayout dlgSpacing(800);
+    dlgStringEdit(DOScommand);
+    dlgPushButton("ok") dlgAccept();
+    dlgPushButton("esc") { dlgReject(); exit(-4056); }
+  };
+  */
+  system(DOScommand);
+  return;
+}
