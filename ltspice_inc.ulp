@@ -138,3 +138,51 @@ string file_search(string searchfile, string root, int maxiteration, string debu
 /**********************************************************************************************************************
 *                                       EXPORT AND IMPORT FUNCTIONS                                                   *
 **********************************************************************************************************************/
+
+// change Eagle slash in path names to backslash for windows
+string lash2backslash(string s) {
+  int pos;
+  do {
+    pos = strchr(s, '/');
+    if (pos >= 0) s[pos] = '\\';
+  } while(pos >= 0);
+  return s;
+}
+
+
+// change backslash in windows path names to Eagle slash
+string backslash2lash(string s) {
+  int pos;
+  do {
+    pos = strchr(s, '\\');
+    if (pos >= 0) s[pos] = '/';
+  } while(pos >= 0);
+  return s;
+}
+
+string checkapostroph(string s) {  // da der ganze String in ' eingeschlossen wird,
+                                   // müssen die Apostrophen verdoppelt werden.
+  string t[];
+  int cnt;
+  cnt = strsplit(t, s, '\''); // check Apostroph
+  if (cnt > 1) {
+    s = "";
+    for (int i = 0; i < cnt; i++) {
+      if (i == 0) {
+        if (t[i]) s += t[i];
+      }
+      else if (i) s += "''" + t[i];
+    }
+  }
+ return s;
+}
+
+int makedir(string root1, string subdir) {  /*** generate DOS command MKDIR ***/
+  string DOScommand;
+  sprintf(DOScommand, "CMD.EXE  /C MKDIR \"%s%s\"",  lash2backslash(root1), lash2backslash(subdir));
+  system(DOScommand);
+  string f[];
+  int n = fileglob(f, root1 + subdir); // prüfe ob das Verzeichnis angelegt werden konnte.
+  return n;
+}
+
