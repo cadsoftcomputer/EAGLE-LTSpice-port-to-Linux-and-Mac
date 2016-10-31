@@ -527,6 +527,7 @@ int    LTTextSize = 112;    // default zum importieren von LTspice symbolen
                             // in mil bei Font: Arial, Size: 28, unter LT_Spice-Control-Panel / Drafting Options
                             // die Texte können nicht exakt berechnet werden, da die Programme unterschiedliche Fonts,
                             // und innerhalb der Fonts die Zeichen wiederum unterschiedlich definert sind!
+
 /*
 
 // ********************************
@@ -671,7 +672,6 @@ void testsyscommand(string cmdexe, string s) {
   return;
 }
 
-
 char   SearchStartDrive = 'C';  // *** erstes Windowslaufwerk  ***
 string StartFolder;     // der Grundpfad
 char   SearchLastDrive = 'Z';   // 'Z' *** letztes Windowslaufwerk ***
@@ -693,26 +693,10 @@ if (OS < 0) {
 }
 */
 
+#include "ltspice_inc.ulp" //I placed the include statement here because some of the functions in include rely on
+                           //global variables defined above.
+
 /* *************** file functions *************** */
-int check_files(string path, string file_ext) {
-  return fileglob(SearchFiles, path + file_ext);
-}
-
-
-// ein Windows-Laufwerk beginnt mit "Buchstabe:\"
-// suche nach ":/" hinter dem Laufwerksbuchstaben
-void check_windows_root(void) {
-  string drv;
-  for(int d = SearchStartDrive; d <= SearchLastDrive; d++) {
-    sprintf(drv, "%c:/", d);
-    if (check_files(drv, "/")) {
-      SearchRoot[SearchnRoot] = drv;
-      SearchnRoot++;
-    }
-  }
-  return;
-}
-
 
 string cut_path(string s) {
   int pos = strrchr(s, '/', -1);
