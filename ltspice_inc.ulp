@@ -186,3 +186,10 @@ int makedir(string root1, string subdir) {  /*** generate DOS command MKDIR ***/
   return n;
 }
 
+void call_system(string exportfile) {  // DOS comand execute
+  string syscommand;
+  // Das executable und der Dateiname müssen in " " eingeschlossen werden, wegen Spaces im Pfad-Dateinamen!
+  sprintf(syscommand, "\"%s\" \"%s\"", lash2backslash(LTSpiceExecute), lash2backslash(exportfile));
+  system(syscommand);  // externes Programm starten
+  return;
+}

@@ -3677,16 +3677,6 @@ void imp_bustap(string l) {
   return;
 }
 
-
-void call_system(string exportfile) {  // DOS comand execute
-  string syscommand;
-  // Das executable und der Dateiname müssen in " " eingeschlossen werden, wegen Spaces im Pfad-Dateinamen!
-  sprintf(syscommand, "\"%s\" \"%s\"", lash2backslash(LTSpiceExecute), lash2backslash(exportfile));
-  system(syscommand);  // externes Programm starten
-  return;
-}
-
-
 /****** IMPORT SETUP MENU ******/
 void imp_setupmenu(void) {
     int editspicesym = 0;
