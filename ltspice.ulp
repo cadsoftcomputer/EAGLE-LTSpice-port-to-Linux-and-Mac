@@ -3707,7 +3707,7 @@ void imp_setupmenu(void) {
           dlgCell( 2, 1)  dlgLabel("LTspice symbol:");
           dlgCell( 2, 2)  dlgStringEdit(SpiceSymbol);
           dlgCell( 2, 3)  dlgPushButton("&Browse") {
-                            string mFileSpiceSym = backslash2lash(dlgFileOpen("Select a LTspice symbol", SpiceSymbol, "*.asy"));
+                            string mFileSpiceSym = backslash2lash(dlgFileOpen("Select a LTspice symbol", SpiceSymbol, "*.asy"), OS);
                             if (mFileSpiceSym) {
                               EagleSpiceLbrDir = filedir(mFileSpiceSym);
                               SpiceSymbol = mFileSpiceSym;
@@ -3743,7 +3743,7 @@ void imp_setupmenu(void) {
           dlgCell( 7, 1)  dlgLabel("&New EAGLE library name ");
           dlgCell( 7, 2)  dlgStringEdit(NewLbrName);
           dlgCell( 7, 3)  dlgPushButton("Br&owse") {
-                            string mNewLbrName = backslash2lash(dlgFileSave("Select a Spice symbol", NewLbrName, "*.lbr"));
+                            string mNewLbrName = backslash2lash(dlgFileSave("Select a Spice symbol", NewLbrName, "*.lbr"), OS);
                             if (mNewLbrName) NewLbrName = mNewLbrName;
                           };
           dlgCell( 8, 2)  dlgLabel("(<i>let this line empty to import symbol at current lbr.</b>)");
@@ -3793,7 +3793,7 @@ void imp_setupmenu(void) {
           dlgCell( 6 ,  1 ) dlgLabel("Spice schematic");
           dlgCell( 6 ,  2 ) dlgStringEdit(ImpSpiceSchematicAsc);
           dlgCell( 6 ,  3 ) dlgPushButton("&Browse") {
-            string mImpSpiceSchematicAsc = backslash2lash(dlgFileOpen("Select a spice schematic", ImpSpiceSchematicAsc , "*.asc"));
+            string mImpSpiceSchematicAsc = backslash2lash(dlgFileOpen("Select a spice schematic", ImpSpiceSchematicAsc , "*.asc"), OS);
             if (mImpSpiceSchematicAsc) {
               ImpSpiceSchematicAsc = mImpSpiceSchematicAsc;
               SchName = filedir(schname) + filesetext(filename(mImpSpiceSchematicAsc), ".sch");
@@ -3809,7 +3809,7 @@ void imp_setupmenu(void) {
           dlgCell( 7 ,  1 ) dlgLabel("Eagle schematic ");
           dlgCell( 7 ,  2 ) dlgStringEdit(SchName);
           dlgCell( 7 ,  3 ) dlgPushButton("&Browse") {
-            string mSchName = backslash2lash(dlgFileOpen("Select eagle schematic", SpiceSimulationLbr , "*.sch"));
+            string mSchName = backslash2lash(dlgFileOpen("Select eagle schematic", SpiceSimulationLbr , "*.sch"), OS);
             if (mSchName) {
               SchName = mSchName;
             }
