@@ -8,6 +8,29 @@
 *                                               FILE FUNCTIONS                                                        *
 **********************************************************************************************************************/
 
+// This function checks what operating system this ULP is running on.
+string operatingsystem(void){
+  int discover;
+  string result;
+  
+  discover = strstr(OS_SIGNATURE, "Windows");
+  if (discover < 0) {
+    discover = strstr(OS_SIGNATURE, "Linux");
+    if (discover < 0) {
+      result = "MAC";
+      return result;
+    }
+    else {
+      result = "LINUX";
+      return result;
+    }
+  }
+  else {
+    result = "WINDOWS";
+    return result;
+  }
+}
+
 int check_files(string path, string file_ext) {
   return fileglob(SearchFiles, path + file_ext);
 }

@@ -693,8 +693,14 @@ if (OS < 0) {
 }
 */
 
+string OS="";   //This variable will define what OS the ULP is being run under WINDOWS, LINUX, MAC JG 11/10/2016
+
+#include "debug.ulp"
 #include "ltspice_inc.ulp" //I placed the include statement here because some of the functions in include rely on
                            //global variables defined above.
+                           
+OS = operatingsystem();  //Check operating system
+done = Debug(OS);
 
 /* *************** file functions *************** */
 
