@@ -8,26 +8,24 @@
 *                                               FILE FUNCTIONS                                                        *
 **********************************************************************************************************************/
 
+string OS="";   //This variable will define what OS the ULP is being run under WINDOWS, LINUX, MAC JG 11/10/2016
+
 // This function checks what operating system this ULP is running on. Verified 11/10/2016
-string operatingsystem(void){
+void operatingsystem(void){
   int discover;
-  string result;
   
   discover = strstr(OS_SIGNATURE, "Windows");
   if (discover < 0) {
     discover = strstr(OS_SIGNATURE, "Linux");
     if (discover < 0) {
-      result = "MAC";
-      return result;
+      OS = "MAC";
     }
     else {
-      result = "LINUX";
-      return result;
+      OS = "LINUX";
     }
   }
   else {
-    result = "WINDOWS";
-    return result;
+    OS = "WINDOWS";
   }
 }
 
@@ -163,9 +161,9 @@ string file_search(string searchfile, string root, int maxiteration, string debu
 **********************************************************************************************************************/
 
 // change Eagle slash in path names to backslash for windows
-string lash2backslash(string s, string os) {
+string lash2backslash(string s) {
   int pos;
-  if (os == "WINDOWS") {
+  if (OS == "WINDOWS") {
 	do {
 	  pos = strchr(s, '/');
       if (pos >= 0) s[pos] = '\\';
@@ -177,9 +175,9 @@ string lash2backslash(string s, string os) {
 
 
 // change backslash in windows path names to Eagle slash
-string backslash2lash(string s, string os) {
+string backslash2lash(string s) {
   int pos;
-  if (os == "WINDOWS") {
+  if (OS == "WINDOWS") {
     do {
       pos = strchr(s, '\\');
       if (pos >= 0) s[pos] = '/';
@@ -206,10 +204,10 @@ string checkapostroph(string s) {  // da der ganze String in ' eingeschlossen wi
  return s;
 }
 
-int makedir(string root1, string subdir, string os) {  /*** generate DOS command MKDIR ***/
-  if (os == "WINDOWS") {
+int makedir(string root1, string subdir) {  /*** generate DOS command MKDIR ***/
+  if (OS == "WINDOWS") {
 	string DOScommand;
-	sprintf(DOScommand, "CMD.EXE  /C MKDIR \"%s%s\"",  lash2backslash(root1, os), lash2backslash(subdir, os));
+	sprintf(DOScommand, "CMD.EXE  /C MKDIR \"%s%s\"",  lash2backslash(root1), lash2backslash(subdir));
 	system(DOScommand);
 	string f[];
 	int n = fileglob(f, root1 + subdir); // prüfe ob das Verzeichnis angelegt werden konnte.
@@ -217,7 +215,7 @@ int makedir(string root1, string subdir, string os) {  /*** generate DOS command
   }
   else {
 	string command;
-	sprintf(command, "mkdir %s%s", lash2backslash(root1, os), lash2backslash(subdir, os));
+	sprintf(command, "mkdir %s%s", lash2backslash(root1), lash2backslash(subdir));
 	system(command);
 	string f[];
 	int n = fileglob(f, root1 + subdir); // Confirm directory was created.
@@ -225,20 +223,20 @@ int makedir(string root1, string subdir, string os) {  /*** generate DOS command
   }
 }
 
-void call_system(string exportfile, string os) {  // DOS comand execute
-  if (os == "WINDOWS") {
+void call_system(string exportfile) {  // DOS comand execute
+  if (OS == "WINDOWS") {
 	string syscommand;
 	// Das executable und der Dateiname müssen in " " eingeschlossen werden, wegen Spaces im Pfad-Dateinamen!
-	sprintf(syscommand, "\"%s\" \"%s\"", lash2backslash(LTSpiceExecute, os), lash2backslash(exportfile, os));
+	sprintf(syscommand, "\"%s\" \"%s\"", lash2backslash(LTSpiceExecute), lash2backslash(exportfile));
 	system(syscommand);  // externes Programm starten
 	return;
   }
 }
 
-void dosfilecopy( string source, string target, string option, string os) {
-  if (os == "WINDOWS"){
+void dosfilecopy( string source, string target, string option) {
+  if (OS == "WINDOWS"){
 	string DOScommand;
-	sprintf(DOScommand, "XCOPY \"%s\" \"%s\" %s", lash2backslash(source, os), lash2backslash(target, os), option);
+	sprintf(DOScommand, "XCOPY \"%s\" \"%s\" %s", lash2backslash(source), lash2backslash(target), option);
 	/*
 	dlgDialog("DOS command") {
 	  dlgHBoxLayout dlgSpacing(800);
