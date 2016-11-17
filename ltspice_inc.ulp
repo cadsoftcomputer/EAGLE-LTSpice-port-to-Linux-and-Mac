@@ -206,34 +206,48 @@ string checkapostroph(string s) {  // da der ganze String in ' eingeschlossen wi
  return s;
 }
 
-int makedir(string root1, string subdir) {  /*** generate DOS command MKDIR ***/
-  string DOScommand;
-  sprintf(DOScommand, "CMD.EXE  /C MKDIR \"%s%s\"",  lash2backslash(root1, OS), lash2backslash(subdir, OS));
-  system(DOScommand);
-  string f[];
-  int n = fileglob(f, root1 + subdir); // prüfe ob das Verzeichnis angelegt werden konnte.
-  return n;
+int makedir(string root1, string subdir, string os) {  /*** generate DOS command MKDIR ***/
+  if (os == "WINDOWS") {
+	string DOScommand;
+	sprintf(DOScommand, "CMD.EXE  /C MKDIR \"%s%s\"",  lash2backslash(root1, os), lash2backslash(subdir, os));
+	system(DOScommand);
+	string f[];
+	int n = fileglob(f, root1 + subdir); // prüfe ob das Verzeichnis angelegt werden konnte.
+	return n;
+  }
+  else {
+	string command;
+	sprintf(command, "mkdir %s%s", lash2backslash(root1, os), lash2backslash(subdir, os));
+	system(command);
+	string f[];
+	int n = fileglob(f, root1 + subdir); // Confirm directory was created.
+	return n;
+  }
 }
 
-void call_system(string exportfile) {  // DOS comand execute
-  string syscommand;
-  // Das executable und der Dateiname müssen in " " eingeschlossen werden, wegen Spaces im Pfad-Dateinamen!
-  sprintf(syscommand, "\"%s\" \"%s\"", lash2backslash(LTSpiceExecute, OS), lash2backslash(exportfile, OS));
-  system(syscommand);  // externes Programm starten
-  return;
+void call_system(string exportfile, string os) {  // DOS comand execute
+  if (os == "WINDOWS") {
+	string syscommand;
+	// Das executable und der Dateiname müssen in " " eingeschlossen werden, wegen Spaces im Pfad-Dateinamen!
+	sprintf(syscommand, "\"%s\" \"%s\"", lash2backslash(LTSpiceExecute, os), lash2backslash(exportfile, os));
+	system(syscommand);  // externes Programm starten
+	return;
+  }
 }
 
-void dosfilecopy( string source, string target, string option) {
-  string DOScommand;
-  sprintf(DOScommand, "XCOPY \"%s\" \"%s\" %s", lash2backslash(source, OS), lash2backslash(target, OS), option);
-  /*
-  dlgDialog("DOS command") {
-    dlgHBoxLayout dlgSpacing(800);
-    dlgStringEdit(DOScommand);
-    dlgPushButton("ok") dlgAccept();
-    dlgPushButton("esc") { dlgReject(); exit(-4056); }
-  };
-  */
-  system(DOScommand);
-  return;
+void dosfilecopy( string source, string target, string option, string os) {
+  if (os == "WINDOWS"){
+	string DOScommand;
+	sprintf(DOScommand, "XCOPY \"%s\" \"%s\" %s", lash2backslash(source, os), lash2backslash(target, os), option);
+	/*
+	dlgDialog("DOS command") {
+	  dlgHBoxLayout dlgSpacing(800);
+	  dlgStringEdit(DOScommand);
+      dlgPushButton("ok") dlgAccept();
+      dlgPushButton("esc") { dlgReject(); exit(-4056); }
+    };
+    */
+	system(DOScommand);
+	return;
+  }
 }
