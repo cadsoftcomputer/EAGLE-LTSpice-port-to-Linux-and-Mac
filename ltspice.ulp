@@ -1193,7 +1193,7 @@ void check_exist_directory(string fname) {  // überprüfe die Existenz des Verzei
   int len =strlen(fdir);
   if (fdir[len-1] == '/') fdir[len-1] = 0; // für MKDIR darf kein Backslash (Slash) am Ende sein.
   if (!n) {
-    if (!makedir("", fdir)) { // Returnwert 0 wenn das Verzeichnis nicht angelegt werden konnte
+    if (!makedir("", fdir, OS)) { // Returnwert 0 wenn das Verzeichnis nicht angelegt werden konnte
       dlgMessageBox("!Can't build:\n" + fdir, "ok", "esc");
       exit(-1359);
     }
@@ -4001,16 +4001,16 @@ if (!LTSpiceExecute || argv[2] == "/S") {
   string copyeaglesym2spice = file_search( "eagle", LTSpiceLibDir, 3, "4123");  // prüfe ob Unterordner /eagle unter /sym besteht?
   string copysource = eagleroot+"misc/ltspice/lib/*.*";
   if (copyeaglesym2spice) {
-    dosfilecopy( copysource, LTSpiceLibDir, "/S /Y"); // 2012-11-27 XCOPY mit Unterordner und ohne Eingabe/Quittierung
+    dosfilecopy( copysource, LTSpiceLibDir, "/S /Y", OS); // 2012-11-27 XCOPY mit Unterordner und ohne Eingabe/Quittierung
   }
   else {
-    if (!makedir(LTSpiceLibDir, "/sym/eagle")) { // Returnwert 0 wenn das Verzeichnis nicht angelegt werden konnte.
+    if (!makedir(LTSpiceLibDir, "/sym/eagle", OS)) { // Returnwert 0 wenn das Verzeichnis nicht angelegt werden konnte.
       dlgMessageBox("!Can't creat directory:\n" + LTSpiceLibDir + "eagle", "CANCEL");
       exit(-4181);
     }
     // kopiere die Spice Symbole vom Eagle-Paket nach LTC lib/sym/eagle inkl. Unterordner
     // 2012-11-27 neu ist der Ordner sub mit der Datei note.sub
-    dosfilecopy( copysource, LTSpiceLibDir, "/S /Y"); // 2012-11-27 XCOPY mit Unterordner und ohne Eingabe/Quittierung
+    dosfilecopy( copysource, LTSpiceLibDir, "/S /Y", OS); // 2012-11-27 XCOPY mit Unterordner und ohne Eingabe/Quittierung
   }
 
   SpiceSimulationLbr = file_search("ltspice/lt-spice-simulation.lbr",  EAGLE_DIR, 4, "4138"); // die Symbole zum simulieren, Stimuli (V, I, F Generatoren)
@@ -4136,7 +4136,7 @@ if (strupr(argv[1]) == "/E") {
     und kehrt dann zum aufrufenden Fenster zurück.
     Vorteil, das Fenster (Schaltplan) hat den Fokus wieder!
     *******************************************************************************************/
-    call_system(ExpSchematic2LTpice);
+    call_system(ExpSchematic2LTpice, OS);
 
     newfiletim = filetime(ExpSchematic2LTpice);
     // Überprüfe den Timestamp der Datei, falls geändert, dann starte das ULP mit der Option RELOAD!
