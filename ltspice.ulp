@@ -3956,7 +3956,10 @@ void autosetupinfo(string dlgheader, string cntscrsetup) {
  *********************** */
 readconfig();
 int CntScr = 0;
+int WineInUse = 0; //If 1 LTspice is running under WINE, otherwise LTspice is running natively
+
 if (!LTSpiceExecute || argv[2] == "/S") {
+  // First thing to do is find the LTSpice Executable, if not found ask the user to specify
   string rootpath[] = { "C:/Programme/", "C:/Program files (x86)/", "C:/Program files/", "D:/Program files (x86)/", "D:/Program files/" }; // 2012-10-11
   int nroot = 0;
   do {
@@ -3965,14 +3968,18 @@ if (!LTSpiceExecute || argv[2] == "/S") {
   } while (!LTSpiceExecute && rootpath[nroot]);
 
   if (!LTSpiceExecute) {
-    dlgMessageBox("!LTspiceIV (scad3.exe) not found.", "OK");
-    exit(-4141);
+    dlgMessageBox("!LTspiceIV (scad3.exe) not found. Please specify the location of your LTSpice executable in the next dialog", "OK");
+    LTSpiceExecute = dlgFileOpen("Browse to your LTSpice Executable", "", "");
+    if (!LTSpiceExecute) {
+      dlgMessageBox("No LTSpice executable specified. Please run the ULP again to try searching for it again", "OK");
+      exit(-4141);
+    }
   }
-  else {
-    ExpEagleSpiceSymDir = filedir(LTSpiceExecute) + "lib/sym/eagle/"; // 2012-12-05
-    LTSpiceLibDir = filedir(LTSpiceExecute) + "lib/";  // 2012-11-27
-  }
+  // LTSpice executable has been found, now define symbol directory and library directory
+  ExpEagleSpiceSymDir = filedir(LTSpiceExecute) + "lib/sym/eagle/"; // 2012-12-05
+  LTSpiceLibDir = filedir(LTSpiceExecute) + "lib/";  // 2012-11-27
 
+  // Now to define EAGLE's directories
   int pos = strstr(EagleExecute, "bin/");            // 2012-11-27 nur den Hauptpfad zu den Unterordnern
   string eagleroot = strsub(EagleExecute, 0, pos);
 
