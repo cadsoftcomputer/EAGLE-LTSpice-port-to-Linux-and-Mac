@@ -1106,6 +1106,7 @@ void readconfig(void) {  // read configuration file of ULP
   Imp_ConnectScriptDir = cfgget("ULP:ltspice.Imp_ConnectScriptDir");
   ExpEagleSpiceSymDir = cfgget("ULP:ltspice.ExpEagleSpiceSymDir");
   Ex_SpiceAscDir = cfgget("ULP:ltspice.SpiceAscDir");
+  WineInUse = cfgget("ULP:ltspice.WineInUse");  //Added 11/18/2016
   return;
 }
 
@@ -1125,6 +1126,7 @@ void saveconfig(void) {
   cfgset("ULP:ltspice.Imp_ConnectScriptDir", Imp_ConnectScriptDir);
   cfgset("ULP:ltspice.ExpEagleSpiceSymDir", ExpEagleSpiceSymDir);
   cfgset("ULP:ltspice.SpiceAscDir", Ex_SpiceAscDir);
+  cfgset("ULP:ltspice.WineInUse", WineInUse); //Added 11/18/2016
   return;
 }
 
