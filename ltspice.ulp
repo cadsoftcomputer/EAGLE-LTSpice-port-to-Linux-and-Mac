@@ -684,6 +684,7 @@ int    SearchStart, SearchEnd;
 string a[];
 int    SearchIs_UNC;
 int    CntSubDir = 4;  // maximal bis in den 4. Unterordner suchen
+string WineInUse = "0"; //If LTspice is running under WINE value is "1", otherwise LTspice is running natively and value is "0"
 
 /* Removed 10/21/2016 JG not necessary for cross-platform implementation
 int OS = strstr(OS_SIGNATURE, "Windows");
@@ -3954,7 +3955,6 @@ void autosetupinfo(string dlgheader, string cntscrsetup) {
  *********************** */
 readconfig();
 int CntScr = 0;
-int WineInUse = 0; //If LTspice is running under WINE value is 1, otherwise LTspice is running natively and value is 0
 string homedir = ""; // This is going to be used to help find wine
 
 if (!LTSpiceExecute || argv[2] == "/S") {
@@ -3969,7 +3969,7 @@ if (!LTSpiceExecute || argv[2] == "/S") {
   if (!LTSpiceExecute) {
     dlgMessageBox("!LTspiceIV (scad3.exe) not found. Please specify the location of your LTSpice executable in the next dialog", "OK");
     WineInUse = is_WINE_in_use();
-    if (WineInUse == 1) {
+    if (WineInUse == "1") {
       homedir = dlgDirectory("Browse to your home directory, where your .wine folder is located", "");
       done = Debug(homedir);
       LTSpiceExecute = dlgFileOpen("Browse to your LTSpice Executable", homedir + "/.wine", "");
@@ -4019,7 +4019,7 @@ if (!LTSpiceExecute || argv[2] == "/S") {
   }
   else {
     if (!makedir(LTSpiceLibDir, "/sym/eagle")) { // Returnwert 0 wenn das Verzeichnis nicht angelegt werden konnte.
-      dlgMessageBox("!Can't creat directory:\n" + LTSpiceLibDir + "eagle", "CANCEL");
+      dlgMessageBox("!Can't create directory:\n" + LTSpiceLibDir + "eagle", "CANCEL");
       exit(-4181);
     }
     // kopiere die Spice Symbole vom Eagle-Paket nach LTC lib/sym/eagle inkl. Unterordner
@@ -4133,9 +4133,9 @@ if (strupr(argv[1]) == "/E") {
     string syscommand;
 
     // Handshake mit LT-Spice über eine Datei (momentan der LTspice-Schaltplan selber, über den Zeitstempel)
+    // Eng:Handshake with LT-Spice over a file (currently the LTspice circuit diagram itself, over the time stamp)
     if (Ex_WaitOnHandShake) {
-      sprintf(syscommand, "cmd.exe /c  \"%s\" \"%s\"", LTSpiceExecute, ExpSchematic2LTpice);
-      system(syscommand);  // externes Programm starten
+      call_system(ExpSchematic2LTpice, WineInUse);
 
       ExportedFileTime = filetime(ExpSchematic2LTpice);
       newfiletim = filetime(ExpSchematic2LTpice);
@@ -4145,11 +4145,16 @@ if (strupr(argv[1]) == "/E") {
       } while (newfiletim == ExportedFileTime);
       exit ("RUN 'ltspice.ulp /I' '"+ ExpSchematic2LTpice + "' 'RELOAD'");
     }
-    /******************************************************************************************
-    Kein Handshake, das ULP wartet auf die Beendigung des aufgerufenen Programm (DOS-BOX)
-    und kehrt dann zum aufrufenden Fenster zurück.
-    Vorteil, das Fenster (Schaltplan) hat den Fokus wieder!
-    *******************************************************************************************/
+/* *****************************************************************************************
+*    Kein Handshake, das ULP wartet auf die Beendigung des aufgerufenen Programm (DOS-BOX)
+*    und kehrt dann zum aufrufenden Fenster zurück.
+*    Vorteil, das Fenster (Schaltplan) hat den Fokus wieder!
+*    Eng:
+*    No handshake, the ULP waits for the termination of the called program (DOS BOX)
+*    And then returns to the calling window.
+*    Advantage, the window (circuit diagram) has the focus again!
+*******************************************************************************************/
+    done = Debug(" I'm in the handshake code");
     call_system(ExpSchematic2LTpice, WineInUse);
 
     newfiletim = filetime(ExpSchematic2LTpice);

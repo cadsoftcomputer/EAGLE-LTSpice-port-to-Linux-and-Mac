@@ -33,19 +33,19 @@ int check_files(string path, string file_ext) {
   return fileglob(SearchFiles, path + file_ext);
 }
 
-int is_WINE_in_use(void) {
+string is_WINE_in_use(void) {
   if (OS == "WINDOWS") {  //Windows doesn't need WINE so always return 0
-    return 0;
+    return "0";
   }
   if (OS == "LINUX") {  //LTSpice in Linux always requires WINE so return 1
-    return 1;
+    return "1";
   }
   if (OS == "MAC") { //Newer versions of LTSpice can run natively on Mac, older versions require WINE.
     if (dlgMessageBox("Are you running LTSpice under WINE?", "&Yes", "&No") == 0) {
-      return 1;
+      return "1";
     }
     else {
-      return 0;
+      return "0";
     }
   }
 }
@@ -234,8 +234,7 @@ int makedir(string root1, string subdir) {  /*** generate DOS command MKDIR ***/
   }
   else {
 	string command;
-	sprintf(command, "mkdir %s%s", lash2backslash(root1), lash2backslash(subdir));
-  done = Debug(command);
+	sprintf(command, "mkdir \"%s%s\"", lash2backslash(root1), lash2backslash(subdir));
 	system(command);
 	string f[];
 	int n = fileglob(f, root1 + subdir); // Confirm directory was created.
@@ -243,13 +242,28 @@ int makedir(string root1, string subdir) {  /*** generate DOS command MKDIR ***/
   }
 }
 
-void call_system(string exportfile, int wineuse) {  // DOS comand execute
+void call_system(string exportfile, string wineuse) {  // DOS comand execute
+  string syscommand;
+  done = Debug("Inside call_system");
+  
   if (OS == "WINDOWS") {
-	string syscommand;
 	// Das executable und der Dateiname müssen in " " eingeschlossen werden, wegen Spaces im Pfad-Dateinamen!
 	sprintf(syscommand, "\"%s\" \"%s\"", lash2backslash(LTSpiceExecute), lash2backslash(exportfile));
 	system(syscommand);  // externes Programm starten
 	return;
+  }
+  else {
+    if (wineuse == "1") {
+      sprintf(syscommand, "wine\ \"%s\" \"%s\"", lash2backslash(LTSpiceExecute), lash2backslash(exportfile));
+      done = Debug(syscommand);
+      system(syscommand);  // start external program
+      return;
+    }
+    else { //This would be MAC running natively
+      done = Debug("I'm in the Mac section");
+      sprintf(syscommand, "\"%s\" \"%s\"", lash2backslash(LTSpiceExecute), lash2backslash(exportfile));
+      system(syscommand);  // externes Programm starten
+    }
   }
 }
 
