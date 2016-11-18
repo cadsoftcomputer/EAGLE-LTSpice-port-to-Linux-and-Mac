@@ -3954,7 +3954,8 @@ void autosetupinfo(string dlgheader, string cntscrsetup) {
  *********************** */
 readconfig();
 int CntScr = 0;
-int WineInUse = 0; //If 1 LTspice is running under WINE, otherwise LTspice is running natively
+int WineInUse = 0; //If LTspice is running under WINE value is 1, otherwise LTspice is running natively and value is 0
+string homedir = ""; // This is going to be used to help find wine
 
 if (!LTSpiceExecute || argv[2] == "/S") {
   // First thing to do is find the LTSpice Executable, if not found ask the user to specify
@@ -3967,7 +3968,15 @@ if (!LTSpiceExecute || argv[2] == "/S") {
 
   if (!LTSpiceExecute) {
     dlgMessageBox("!LTspiceIV (scad3.exe) not found. Please specify the location of your LTSpice executable in the next dialog", "OK");
-    LTSpiceExecute = dlgFileOpen("Browse to your LTSpice Executable", "", "");
+    WineInUse = is_WINE_in_use();
+    if (WineInUse == 1) {
+      homedir = dlgDirectory("Browse to your home directory, where your .wine folder is located", "");
+      done = Debug(homedir);
+      LTSpiceExecute = dlgFileOpen("Browse to your LTSpice Executable", homedir + "/.wine", "");
+    }
+    else {
+      LTSpiceExecute = dlgFileOpen("Browse to your LTSpice Executable", "", "");
+    }
     if (!LTSpiceExecute) {
       dlgMessageBox("No LTSpice executable specified. Please run the ULP again to try searching for it again", "OK");
       exit(-4141);
@@ -4141,7 +4150,7 @@ if (strupr(argv[1]) == "/E") {
     und kehrt dann zum aufrufenden Fenster zurück.
     Vorteil, das Fenster (Schaltplan) hat den Fokus wieder!
     *******************************************************************************************/
-    call_system(ExpSchematic2LTpice);
+    call_system(ExpSchematic2LTpice, WineInUse);
 
     newfiletim = filetime(ExpSchematic2LTpice);
     // Überprüfe den Timestamp der Datei, falls geändert, dann starte das ULP mit der Option RELOAD!

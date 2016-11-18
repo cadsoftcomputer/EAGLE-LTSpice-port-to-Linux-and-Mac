@@ -11,7 +11,7 @@
 string OS="";   //This variable will define what OS the ULP is being run under WINDOWS, LINUX, MAC JG 11/10/2016
 
 // This function checks what operating system this ULP is running on. Verified 11/10/2016
-void operatingsystem(void){
+void operatingsystem(void) {
   int discover;
   
   discover = strstr(OS_SIGNATURE, "Windows");
@@ -33,6 +33,22 @@ int check_files(string path, string file_ext) {
   return fileglob(SearchFiles, path + file_ext);
 }
 
+int is_WINE_in_use(void) {
+  if (OS == "WINDOWS") {  //Windows doesn't need WINE so always return 0
+    return 0;
+  }
+  if (OS == "LINUX") {  //LTSpice in Linux always requires WINE so return 1
+    return 1;
+  }
+  if (OS == "MAC") { //Newer versions of LTSpice can run natively on Mac, older versions require WINE.
+    if (dlgMessageBox("Are you running LTSpice under WINE?", "&Yes", "&No") == 0) {
+      return 1;
+    }
+    else {
+      return 0;
+    }
+  }
+}
 
 // ein Windows-Laufwerk beginnt mit "Buchstabe:\"
 // suche nach ":/" hinter dem Laufwerksbuchstaben
@@ -52,6 +68,9 @@ void check_windows_root(void) {
 // searchfile   = die zu suchende Datei
 // root         = der Start-Pfad ab dem gesucht werden soll, inkl. Laufwerkbuchstabe unter Windows
 // maxiteration = die Tiefe, Anzahl der Verzweigung (Unterordner) ab dem root Pfad.
+
+// As it turns out there is really nothing OS-specific about this function, by having the user
+// specify a few locations, I've avoided having to modify this file at all. JG 11/18/2016
 /*************************************************************************************************/
 string file_search(string searchfile, string root, int maxiteration, string debugnum) {
   if (!root) {
@@ -64,17 +83,17 @@ string file_search(string searchfile, string root, int maxiteration, string debu
     exit(-752);
   }
   int len = strlen(root);
-  if (root[len-1] != '/') root += "/"; // root muß mit Slash enden!
-  if (!check_files(root, "")) {  // den Pfad prüfen
+  if (root[len-1] != '/') root += "/"; // root muß mit Slash enden! Eng: Root path must end in slash
+  if (!check_files(root, "")) {  // den Pfad prüfen Eng: Make sure it's not empty
     return "";
   }
   // *** Betriebsystem feststellen ***
   // ******* Windows Laufwerke *******
-  if (root) {
+  if (root) { //Root Directory has been found
     SearchRoot[0] = root;
     SearchnRoot = 1;
   }
-  else {
+  else { //Empty root directory
     check_windows_root();   // unter Windows die Laufwerke ermitteln
     //if (SearchnRoot) {
     //  sprintf(SearchRootfound, "Betriebssystem WINDOWS");
@@ -112,7 +131,7 @@ string file_search(string searchfile, string root, int maxiteration, string debu
   string searchfoundfile[];
 
   do {
-    // 1. die Root-Ordner nach der Datei durchsuchen
+    // 1. die Root-Ordner nach der Datei durchsuchen Eng: Browse the root folders for the file
     for (r = SearchStart; r < SearchEnd; r++) {
       status(SearchRoot[r]);                   // Anzeige des aktuellen Verzeichnisnamen
       n = check_files(SearchRoot[r], searchfile); // suche im Verzeichnis nach Datei
@@ -126,7 +145,7 @@ string file_search(string searchfile, string root, int maxiteration, string debu
     }
     if (finish || (maxiteration && iteration == maxiteration)) break;
 
-    // 2. die Root-Ordner nach Ordnern durchsuchen
+    // 2. die Root-Ordner nach Ordnern durchsuchen Eng: Search the root folders for folders
     for (r = SearchStart; r < SearchEnd; r++) {
       sprintf(h, "%d %d %s", iteration, SearchnRoot, SearchRoot[r]);
       status(h);               // Anzeige des aktuellen Verzeichnisnamen
@@ -216,6 +235,7 @@ int makedir(string root1, string subdir) {  /*** generate DOS command MKDIR ***/
   else {
 	string command;
 	sprintf(command, "mkdir %s%s", lash2backslash(root1), lash2backslash(subdir));
+  done = Debug(command);
 	system(command);
 	string f[];
 	int n = fileglob(f, root1 + subdir); // Confirm directory was created.
@@ -223,7 +243,7 @@ int makedir(string root1, string subdir) {  /*** generate DOS command MKDIR ***/
   }
 }
 
-void call_system(string exportfile) {  // DOS comand execute
+void call_system(string exportfile, int wineuse) {  // DOS comand execute
   if (OS == "WINDOWS") {
 	string syscommand;
 	// Das executable und der Dateiname müssen in " " eingeschlossen werden, wegen Spaces im Pfad-Dateinamen!
