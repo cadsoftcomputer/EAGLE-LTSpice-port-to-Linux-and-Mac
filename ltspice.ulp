@@ -3952,9 +3952,9 @@ void autosetupinfo(string dlgheader, string cntscrsetup) {
   return;
 }
 
-/* ***********************
+/************************
  ******** MAIN ***********
- *********************** */
+ ************************/
 readconfig();
 int CntScr = 0;
 string homedir = ""; // This is going to be used to help find wine
@@ -4057,9 +4057,9 @@ dlgMessageBox("!Default LTspice simulation library found on:\n" + EAGLE_DIR + "/
 }
 
 
-/* ******************************
+/*******************************
  ******** main Export ***********
- ****************************** */
+ *******************************/
 if (strupr(argv[1]) == "/E") {
   if (library) {  /*** LIBRARY ***/
     library(L) {
@@ -4067,11 +4067,11 @@ if (strupr(argv[1]) == "/E") {
       if (deviceset && ExOnceLib) {
         deviceset(DEV) {
           DEV.devices(D) ex_draw_device(D, DEV);
-          /* *****************************************************************************************
+          /******************************************************************************************
           Kein Handshake, das ULP wartet auf die Beendigung des aufgerufenen Programm (DOS-BOX)
           und kehrt dann zum aufrufenden Fenster zurück.
           Vorteil, das Fenster (Schaltplan) hat den Fokus wieder!
-          ****************************************************************************************** */
+          *******************************************************************************************/
           //call_system(Ex_AsyName);
           //exit("RUN ulpmessage 'DEVICESET <b>" + DEV.name + ".dev</b><br>exported to<br>" + ExpEagleSpiceSymDir + filename(filesetext(L.name, "/")) + DEV.name + ".asy'");
           string rmsg;
@@ -4147,7 +4147,7 @@ if (strupr(argv[1]) == "/E") {
       } while (newfiletim == ExportedFileTime);
       exit ("RUN 'ltspice.ulp /I' '"+ ExpSchematic2LTpice + "' 'RELOAD'");
     }
-/* *****************************************************************************************
+/******************************************************************************************
 *    Kein Handshake, das ULP wartet auf die Beendigung des aufgerufenen Programm (DOS-BOX)
 *    und kehrt dann zum aufrufenden Fenster zurück.
 *    Vorteil, das Fenster (Schaltplan) hat den Fokus wieder!
@@ -4169,9 +4169,9 @@ if (strupr(argv[1]) == "/E") {
   exit(-4320);
 }
 
-/* *******************************
- ******** main Imxport ***********
- ******************************* */
+/********************************
+ ******** main Import ***********
+ ********************************/
 else if (strupr(argv[1]) == "/I") {
   sprintf(h, "%d", argc);
   readconfig();

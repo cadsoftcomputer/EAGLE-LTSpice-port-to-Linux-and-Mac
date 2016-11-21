@@ -271,17 +271,26 @@ void call_system(string exportfile, string wineuse) {  // DOS comand execute
 
 void dosfilecopy( string source, string target, string option) {
   if (OS == "WINDOWS"){
-	string DOScommand;
-	sprintf(DOScommand, "XCOPY \"%s\" \"%s\" %s", lash2backslash(source), lash2backslash(target), option);
-	/*
-	dlgDialog("DOS command") {
-	  dlgHBoxLayout dlgSpacing(800);
-	  dlgStringEdit(DOScommand);
-      dlgPushButton("ok") dlgAccept();
-      dlgPushButton("esc") { dlgReject(); exit(-4056); }
-    };
+    string DOScommand;
+    sprintf(DOScommand, "XCOPY \"%s\" \"%s\" %s", lash2backslash(source), lash2backslash(target), option);
+    /*
+    dlgDialog("DOS command") {
+      dlgHBoxLayout dlgSpacing(800);
+      dlgStringEdit(DOScommand);
+        dlgPushButton("ok") dlgAccept();
+        dlgPushButton("esc") { dlgReject(); exit(-4056); }
+      };
     */
-	system(DOScommand);
-	return;
+    system(DOScommand);
+    return;
+  }
+  else {
+    if (option == "/S /Y") {
+      // The above options want a recursive function with no overwrite confirmation. That's what I've implemented below
+      string command;
+      sprintf(command, "yes | cp -rf \"%s\" \"%s\"", lash2backslash(source), lash2backslash(target));
+      system(command);
+    }
+    return;
   }
 }
