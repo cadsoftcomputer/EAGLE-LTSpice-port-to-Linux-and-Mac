@@ -254,7 +254,9 @@ void call_system(string exportfile, string wineuse) {  // DOS comand execute
   }
   else {
     if (wineuse == "1") {
-      sprintf(syscommand, "wine\ \"%s\" \"%s\"", lash2backslash(LTSpiceExecute), lash2backslash(exportfile));
+      sprintf(syscommand, "wine\ \"%s\"\ \"Z:%s\"", lash2backslash(LTSpiceExecute), lash2backslash(exportfile));
+      //In order for Wine to find the file to be imported, you have to reference the linux filesystem from WINE's
+      //point of view. WINE maps the linux file system to the z drive by default. I wonder if the MAC behaves the same.
       done = Debug(syscommand);
       system(syscommand);  // start external program
       return;
