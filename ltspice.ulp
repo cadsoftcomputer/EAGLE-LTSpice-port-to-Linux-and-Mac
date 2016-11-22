@@ -1763,10 +1763,12 @@ string imp_check_use(string lname) {  // check exist lbr in library path
   for (int n = 0; n < Imp_CntUsedLbrs; n++) {  // check lbr in used list?
     if (Imp_UsedLbrs[n] == lname) return "";  // LBR are in use
   }
+  done = Debug("Im in the check use function and the library was not in use");
   int nl = 0;
   int exist = 0;
   string lb[];
   string dir = filedir(lname);  // prüfe auf kompletten Pfad-Datei-Namen
+  done = Debug(dir);
   if (dir) {  // mit Pfad zur Lib
     if (fileglob(lb, lname)) {
       Imp_Cmd += "USE '" + lname + "'; #1933\n";
@@ -3993,9 +3995,16 @@ if (!LTSpiceExecute || argv[2] == "/S") {
   string eagleroot = strsub(EagleExecute, 0, pos);
 
   string cfgdirlbr = cfgget("EAGLE:Directories.Lbr");  // 2012-10-30 den Pfad unter Optionen Verzeichnisse zu den importierten LTspice-LBRs erweitern!
+  done = Debug(cfgdirlbr);
   pos = strstr(cfgdirlbr, "lbr/ltspice");
   if (pos <0) {
-    cfgdirlbr = eagleroot + "lbr/ltspice;" + cfgdirlbr;
+    if (OS == "WINDOWS") {
+      cfgdirlbr = eagleroot + "lbr/ltspice;" + cfgdirlbr;
+    }
+    else {
+      cfgdirlbr = eagleroot + "lbr/ltspice:" + cfgdirlbr; //This is necessary because Windows uses ; as the delimiter where mac and linux use :
+      done=Debug("I'm in the non-windows directory setup\n"+cfgdirlbr);
+    }
     cfgset("EAGLE:Directories.Lbr", cfgdirlbr);
   }
 
