@@ -3974,9 +3974,9 @@ if (!LTSpiceExecute || argv[2] == "/S") {
     dlgMessageBox("!LTspiceIV (scad3.exe) not found. Please specify the location of your LTSpice executable in the next dialog", "OK");
     WineInUse = is_WINE_in_use();
     if (WineInUse == "1") {
-      homedir = dlgDirectory("Browse to your home directory, where your .wine folder is located", "");
-      done = Debug(homedir);
-      LTSpiceExecute = dlgFileOpen("Browse to your LTSpice Executable", homedir + "/.wine", "");
+      //homedir = dlgDirectory("Browse to your home directory, where your .wine folder is located", "");
+      //done = Debug(homedir);
+      LTSpiceExecute = dlgFileOpen("Browse to your LTSpice Executable", EAGLE_HOME + "/.wine", "");
     }
     else {
       LTSpiceExecute = dlgFileOpen("Browse to your LTSpice Executable", "", "");
@@ -3998,13 +3998,7 @@ if (!LTSpiceExecute || argv[2] == "/S") {
   done = Debug(cfgdirlbr);
   pos = strstr(cfgdirlbr, "lbr/ltspice");
   if (pos <0) {
-    if (OS == "WINDOWS") {
-      cfgdirlbr = eagleroot + "lbr/ltspice;" + cfgdirlbr;
-    }
-    else {
-      cfgdirlbr = eagleroot + "lbr/ltspice:" + cfgdirlbr; //This is necessary because Windows uses ; as the delimiter where mac and linux use :
-      done=Debug("I'm in the non-windows directory setup\n"+cfgdirlbr);
-    }
+    cfgdirlbr = set_directory_path_delimiter(eagleroot + "lbr/ltspice;" + cfgdirlbr); //This is necessary because Windows uses ; as the delimiter where mac and linux use :
     cfgset("EAGLE:Directories.Lbr", cfgdirlbr);
   }
 
