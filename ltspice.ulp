@@ -3969,7 +3969,10 @@ if (!LTSpiceExecute || argv[2] == "/S") {
   auto_or_man = dlgMessageBox("EAGLE needs to know the path to your LTSpice executable. Would you like to specify it manually or have EAGLE automatically search?\
                                if the search fails, then you will be asked to find the executable on your machine", "Autosetup", "Manual Setup");
   if (auto_or_man == 0) {
-    string rootpath[] = { "C:/Programme/", "C:/Program files (x86)/", "C:/Program files/", "D:/Program files (x86)/", "D:/Program files/" }; // 2012-10-11
+    string rootstring = assign_rootpath();
+    string rootpath[];
+    strsplit(rootpath, rootstring, ',');
+    
     string executables[] = { "LTSpiceXVII/XVIIx64.exe", "LTSpiceXVII/XVIIx86.exe", "LTSpiceIV/scad3.exe" }; //2016-11-23 The ULP now supports 3 possible executables
     int nroot = 0;
     int nexec = 0;
@@ -3978,13 +3981,16 @@ if (!LTSpiceExecute || argv[2] == "/S") {
       done = Debug(executables[nexec]);
       do {
         done = Debug(rootpath[nroot]);
-        LTSpiceExecute = file_search(executables[nexec], rootpath[nroot], 3, "4085"); // 2012-11-27 das LTspice executable, in Pfad LTspiceIV, das es ältere Versionen gibt, mit unterschiedlichen Pfadnamen!
+        LTSpiceExecute = file_search(executables[nexec], rootpath[nroot], 7, "4085"); // 2012-11-27 das LTspice executable, in Pfad LTspiceIV, das es ältere Versionen gibt, mit unterschiedlichen Pfadnamen!
+        done = Debug(LTSpiceExecute);
         nroot++;
       } while (!LTSpiceExecute && rootpath[nroot]); // Search while there are still paths to search in rootpath[]
+      nroot = 0; //reset the rootpath index
       nexec++;
     } while (!LTSpiceExecute && executables[nexec]); // Search while there are still executables possible
-    
-    dlgMessageBox("!LTspice Exectuable(XVIIx64.exe or XVIIx86.exe or scad3.exe) not found. Please specify the location of your LTSpice executable in the next dialog", "OK");
+    if (!LTSpiceExecute) {
+      dlgMessageBox("!LTspice Exectuable(XVIIx64.exe or XVIIx86.exe or scad3.exe) not found. Please specify the location of your LTSpice executable in the next dialog", "OK");
+    }
   }
 
   if (!LTSpiceExecute) {

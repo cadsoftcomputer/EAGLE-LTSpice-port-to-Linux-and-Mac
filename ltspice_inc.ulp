@@ -175,6 +175,24 @@ string file_search(string searchfile, string root, int maxiteration, string debu
   return searchfoundfile[0];
 }
 
+string assign_rootpath(void) {
+  //This function returns a string containing all the recommended rootpaths for an OS. The calling ULP
+  //then parses it to create the rootpath array
+ 
+  if (OS == "WINDOWS") {
+    return "C:/Programme/,C:/Program files (x86)/,C:/Program files/,D:/Program files (x86)/,D:/Program files/";
+  }
+  if (OS == "LINUX") {
+    return EAGLE_HOME+"/.wine";
+  }
+  if (OS == "MAC") {
+    return "";
+  }
+  else {
+    return "C:/Programme/,C:/Program files (x86)/,C:/Program files/,D:/Program files (x86)/,D:/Program files/";
+  }
+}
+
 /**********************************************************************************************************************
 *                                       EXPORT AND IMPORT FUNCTIONS                                                   *
 **********************************************************************************************************************/
