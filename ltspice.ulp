@@ -3959,20 +3959,35 @@ void autosetupinfo(string dlgheader, string cntscrsetup) {
  ************************/
 readconfig();
 int CntScr = 0;
-string homedir = ""; // This is going to be used to help find wine
+int auto_or_man=0;
+
+//string homedir = ""; // This is going to be used to help find wine
+WineInUse = is_WINE_in_use(); //User will be asked if they are using WINE on Mac, Linux and Windows only have one answer
 
 if (!LTSpiceExecute || argv[2] == "/S") {
-  // First thing to do is find the LTSpice Executable, if not found ask the user to specify
-  string rootpath[] = { "C:/Programme/", "C:/Program files (x86)/", "C:/Program files/", "D:/Program files (x86)/", "D:/Program files/" }; // 2012-10-11
-  int nroot = 0;
-  do {
-    LTSpiceExecute = file_search("LTspiceIV/scad3.exe", rootpath[nroot], 3, "4085"); // 2012-11-27 das LTspice executable, in Pfad LTspiceIV, das es ältere Versionen gibt, mit unterschiedlichen Pfadnamen!
-    nroot++;
-  } while (!LTSpiceExecute && rootpath[nroot]);
+  // First thing to do is find the LTSpice Executable, user will decide if they want the ULP to search or manually define the location of the LTSpice Executable
+  auto_or_man = dlgMessageBox("EAGLE needs to know the path to your LTSpice executable. Would you like to specify it manually or have EAGLE automatically search?\
+                               if the search fails, then you will be asked to find the executable on your machine", "Autosetup", "Manual Setup");
+  if (auto_or_man == 0) {
+    string rootpath[] = { "C:/Programme/", "C:/Program files (x86)/", "C:/Program files/", "D:/Program files (x86)/", "D:/Program files/" }; // 2012-10-11
+    string executables[] = { "LTSpiceXVII/XVIIx64.exe", "LTSpiceXVII/XVIIx86.exe", "LTSpiceIV/scad3.exe" }; //2016-11-23 The ULP now supports 3 possible executables
+    int nroot = 0;
+    int nexec = 0;
+    
+    do {
+      done = Debug(executables[nexec]);
+      do {
+        done = Debug(rootpath[nroot]);
+        LTSpiceExecute = file_search(executables[nexec], rootpath[nroot], 3, "4085"); // 2012-11-27 das LTspice executable, in Pfad LTspiceIV, das es ältere Versionen gibt, mit unterschiedlichen Pfadnamen!
+        nroot++;
+      } while (!LTSpiceExecute && rootpath[nroot]); // Search while there are still paths to search in rootpath[]
+      nexec++;
+    } while (!LTSpiceExecute && executables[nexec]); // Search while there are still executables possible
+    
+    dlgMessageBox("!LTspice Exectuable(XVIIx64.exe or XVIIx86.exe or scad3.exe) not found. Please specify the location of your LTSpice executable in the next dialog", "OK");
+  }
 
   if (!LTSpiceExecute) {
-    dlgMessageBox("!LTspiceIV (scad3.exe) not found. Please specify the location of your LTSpice executable in the next dialog", "OK");
-    WineInUse = is_WINE_in_use();
     if (WineInUse == "1") {
       //homedir = dlgDirectory("Browse to your home directory, where your .wine folder is located", "");
       //done = Debug(homedir);
@@ -3999,6 +4014,7 @@ if (!LTSpiceExecute || argv[2] == "/S") {
   pos = strstr(cfgdirlbr, "lbr/ltspice");
   if (pos <0) {
     cfgdirlbr = set_directory_path_delimiter(eagleroot + "lbr/ltspice;" + cfgdirlbr); //This is necessary because Windows uses ; as the delimiter where mac and linux use :
+    done = Debug(cfgdirlbr);
     cfgset("EAGLE:Directories.Lbr", cfgdirlbr);
   }
 
