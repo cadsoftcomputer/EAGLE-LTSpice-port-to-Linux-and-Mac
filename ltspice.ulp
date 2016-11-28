@@ -3992,8 +3992,8 @@ if (!LTSpiceExecute || argv[2] == "/S") {
       dlgMessageBox("!LTspice Exectuable(XVIIx64.exe or XVIIx86.exe or scad3.exe) not found. Please specify the location of your LTSpice executable in the next dialog", "OK");
     }
   }
-
-  if (!LTSpiceExecute) {
+  done = Debug(LTSpiceExecute);
+  if (!LTSpiceExecute || auto_or_man == 1) {
     if (WineInUse == "1") {
       //homedir = dlgDirectory("Browse to your home directory, where your .wine folder is located", "");
       //done = Debug(homedir);
