@@ -183,7 +183,7 @@ string assign_rootpath(void) {
     return "C:/Programme/,C:/Program files (x86)/,C:/Program files/,D:/Program files (x86)/,D:/Program files/";
   }
   if (OS == "LINUX") {
-    return EAGLE_HOME+"/.wine";
+    return EAGLE_HOME+"/.wine/drive_c/Program\ files/,"+EAGLE_HOME+"/.wine/drive_c/Program\ files\ \(x86\)/";
   }
   if (OS == "MAC") {
     return "";
