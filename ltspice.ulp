@@ -3966,8 +3966,7 @@ WineInUse = is_WINE_in_use(); //User will be asked if they are using WINE on Mac
 
 if (!LTSpiceExecute || argv[2] == "/S") {
   // First thing to do is find the LTSpice Executable, user will decide if they want the ULP to search or manually define the location of the LTSpice Executable
-  auto_or_man = dlgMessageBox("EAGLE needs to know the path to your LTSpice executable. Would you like to specify it manually or have EAGLE automatically search?\
-                               if the search fails, then you will be asked to find the executable on your machine", "Autosetup", "Manual Setup");
+  auto_or_man = dlgMessageBox("EAGLE needs to know the path to your LTSpice executable. Would you like to specify it manually or have EAGLE automatically search?\nIf the search fails, then you will be asked to find the executable on your machine", "Autosetup", "Manual Setup");
   if (auto_or_man == 0) {
     string rootstring = assign_rootpath();
     string rootpath[];
