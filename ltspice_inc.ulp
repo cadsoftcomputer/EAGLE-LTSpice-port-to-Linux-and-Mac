@@ -13,7 +13,7 @@ string OS="";   //This variable will define what OS the ULP is being run under W
 // This function checks what operating system this ULP is running on. Verified 11/10/2016
 void operatingsystem(void) {
   int discover;
-  
+
   discover = strstr(OS_SIGNATURE, "Windows");
   if (discover < 0) {
     discover = strstr(OS_SIGNATURE, "Linux");
@@ -175,10 +175,10 @@ string file_search(string searchfile, string root, int maxiteration, string debu
   return searchfoundfile[0];
 }
 
-string assign_rootpath(void) {
+string assign_rootpath(string wineused) {
   //This function returns a string containing all the recommended rootpaths for an OS. The calling ULP
   //then parses it to create the rootpath array
- 
+
   if (OS == "WINDOWS") {
     return "C:/Programme/,C:/Program files (x86)/,C:/Program files/,D:/Program files (x86)/,D:/Program files/";
   }
@@ -186,7 +186,13 @@ string assign_rootpath(void) {
     return EAGLE_HOME+"/.wine/drive_c/Program\ files/,"+EAGLE_HOME+"/.wine/drive_c/Program\ files\ \(x86\)/";
   }
   if (OS == "MAC") {
-    return "";
+    if (wineused == "1") {
+      // WINE is used
+      return "";
+    }
+    else {
+      return "";
+    }
   }
   else {
     return "C:/Programme/,C:/Program files (x86)/,C:/Program files/,D:/Program files (x86)/,D:/Program files/";
@@ -282,7 +288,7 @@ int makedir(string root1, string subdir) {  /*** generate DOS command MKDIR ***/
 void call_system(string exportfile, string wineuse) {  // DOS comand execute
   string syscommand;
   done = Debug("Inside call_system");
-  
+
   if (OS == "WINDOWS") {
 	// Das executable und der Dateiname müssen in " " eingeschlossen werden, wegen Spaces im Pfad-Dateinamen!
 	sprintf(syscommand, "\"%s\" \"%s\"", lash2backslash(LTSpiceExecute), lash2backslash(exportfile));
