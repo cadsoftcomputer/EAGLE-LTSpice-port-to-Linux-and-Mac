@@ -232,11 +232,12 @@ string backslash2lash(string s) {
 
 string set_directory_path_delimiter(string s) {
   // The objective of this function is to set the delimiters correctly for the OS regardless of what s is
-  int pos;
+  int pos, next_pos;
   if (OS == "WINDOWS") {
     do {
       pos = strchr(s, ':'); //We found linux delimiter change it to ;
-      if (pos >= 0) s[pos] = ';';
+      next_pos = pos+1;
+      if (pos >= 0 & s[next_pos] != '/') s[pos] = ';';
     } while (pos >= 0);
     return s;
   }
