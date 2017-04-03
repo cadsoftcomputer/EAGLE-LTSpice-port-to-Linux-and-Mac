@@ -4010,14 +4010,27 @@ if (!LTSpiceExecute || argv[2] == "/S") {
   ExpEagleSpiceSymDir = filedir(LTSpiceExecute) + "lib/sym/eagle/"; // 2012-12-05
   LTSpiceLibDir = filedir(LTSpiceExecute) + "lib/";  // 2012-11-27
 
-  // Now to define EAGLE's directories
-  int pos = strstr(EagleExecute, "bin/");            // 2012-11-27 nur den Hauptpfad zu den Unterordnern
-  string eagleroot = strsub(EagleExecute, 0, pos);
+  // Now to define EAGLE's directories, JG 03/31/2017 Made changes to work with EAGLE V8.0 and newer
+  int pos;
+  string eagleroot;
+  
+  if (EAGLE_VERSION < 8.0) {
+    pos = strstr(EagleExecute, "bin/");            // 2012-11-27 nur den Hauptpfad zu den Unterordnern
+    eagleroot = strsub(EagleExecute, 0, pos);
+  }
+  else {
+    pos = strstr(EagleExecute, "eagle.exe");            
+    eagleroot = strsub(EagleExecute, 0, pos);
+  }
+  
 
   string cfgdirlbr = cfgget("EAGLE:Directories.Lbr");  // 2012-10-30 den Pfad unter Optionen Verzeichnisse zu den importierten LTspice-LBRs erweitern!
   done = Debug(cfgdirlbr);
   pos = strstr(cfgdirlbr, "lbr/ltspice");
-  if (pos <0) {
+  sprintf(debug, "%d/n", pos);
+  done = Debug(debug);
+  
+  if (pos < 0) {
     cfgdirlbr = set_directory_path_delimiter(eagleroot + "lbr/ltspice;" + cfgdirlbr); //This is necessary because Windows uses ; as the delimiter where mac and linux use :
     done = Debug(cfgdirlbr);
     cfgset("EAGLE:Directories.Lbr", cfgdirlbr);
